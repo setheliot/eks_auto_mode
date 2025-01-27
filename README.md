@@ -23,7 +23,7 @@ Plus several other supporting resources, as shown in the following diagram:
 
 ### Option 1. For those familiar with using Terraform
 1. Update the S3 bucket and DynamoDB table used for Terraform backend state here: [backend.tf](terraform/backend.tf). Instructions are in the comments in that file.
-1. Choose one of the `tfvars` configuration files in the [environment](environment) directory, or create a new one. The environment name `env_name` should be unique to each `tfvars` configuration file. You can also set the AWS Region in the configuration file.
+1. Choose one of the `tfvars` configuration files in the [terraform/environment](terraform/environment) directory, or create a new one. The environment name `env_name` should be unique to each `tfvars` configuration file. You can also set the AWS Region in the configuration file.
 1. `cd` into the `terraform` directory
 1. Run `terraform init`
 1. Set the terraform workspace to the same value as the environment name `env_name` for the `tfvars` configuration file you are using.
