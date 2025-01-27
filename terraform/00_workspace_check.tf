@@ -1,3 +1,14 @@
+###############
+#
+# As a convention (and enforced here) users deploying these resources should use a terraform workspace
+# that matches the env_name from the .tfvars file they are using. This prevents name conflicts within a region
+# as well as for global resources (like IAM roles).
+#
+# Logical order: 00 
+##### "Logical order" refers to the order a human would think of these executions
+##### (although Terraform will determine actual order executed)
+#
+
 # Fetch the current workspace name
 locals {
   current_workspace = terraform.workspace

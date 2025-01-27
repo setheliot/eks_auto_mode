@@ -1,3 +1,13 @@
+###############
+#
+# AWS Infrastructure including the EKS Cluster
+#
+# Logical order: 01 
+##### "Logical order" refers to the order a human would think of these executions
+##### (although Terraform will determine actual order executed)
+#
+###############
+
 #
 # VPC and Subnets
 data "aws_availability_zones" "available" {
@@ -24,12 +34,12 @@ module "vpc" {
   enable_dns_hostnames = true
 
   public_subnet_tags = {
-    "Name" = "${local.prefix_env}-public-subnet"
+    "Name"                   = "${local.prefix_env}-public-subnet"
     "kubernetes.io/role/elb" = "1"
   }
 
   private_subnet_tags = {
-    "Name" = "${local.prefix_env}-private-subnet"
+    "Name"                            = "${local.prefix_env}-private-subnet"
     "kubernetes.io/role/internal-elb" = "1"
   }
 
@@ -56,6 +66,9 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
+  # AWS EKS Auto Mode is enabled here
+  # Auto compute, storage, and load balancing are enabled here
+  # This replaces the more complex eks_managed_node_groups block
   cluster_compute_config = {
     enabled    = true
     node_pools = ["general-purpose"]

@@ -1,10 +1,16 @@
+###############
 #
-# Terraform to create resources in the Kubernetes Cluster
+# Resources in the Kubernetes Cluster such as StorageClass
+#
+# Logical order: 01 
+##### "Logical order" refers to the order a human would think of these executions
+##### (although Terraform will determine actual order executed)
 #
 
 
 #
 # Setup the Kubernetes provider
+# Can only be configured after the EKS cluster is created
 
 # Data provider for cluster auth
 data "aws_eks_cluster_auth" "cluster_auth" {
@@ -34,14 +40,14 @@ resource "kubernetes_storage_class" "ebs" {
     name = "ebs-storage-class"
     annotations = {
       "storageclass.kubernetes.io/is-default-class" = "true"
-    }    
+    }
   }
 
   storage_provisioner = "ebs.csi.eks.amazonaws.com" # This the setting for EKS Auto Mode
   reclaim_policy      = "Retain"
   volume_binding_mode = "WaitForFirstConsumer"
   parameters = {
-    type   = "gp3"
+    type      = "gp3"
     encrypted = "true"
   }
 }
@@ -64,3 +70,5 @@ resource "kubernetes_persistent_volume_claim_v1" "ebs_pvc" {
   }
   wait_until_bound = false
 }
+
+# This will wait until a pod needs it, and then create a PersistentVolume

@@ -1,10 +1,20 @@
+###############
+#
+# Deploy containers to run application code, and a Load Balancer to access the app
+#
+# Logical order: 04 
+##### "Logical order" refers to the order a human would think of these executions
+##### (although Terraform will determine actual order executed)
+#
+
+
 # Define the app name
 locals {
   app_name = "guestbook-${local.prefix_env}"
 }
 
-# This defines the kubernetes deployment for the XYZ app
-resource "kubernetes_deployment_v1" "xyz_deployment_app" {
+# This defines the kubernetes deployment for the guestbook (XYZ) app
+resource "kubernetes_deployment_v1" "guestbook_app_deployment" {
   metadata {
     name = "${local.app_name}-deployment"
     labels = {
@@ -26,6 +36,7 @@ resource "kubernetes_deployment_v1" "xyz_deployment_app" {
         }
       }
       spec {
+        service_account_name = local.ddb_serviceaccount
         container {
           image = "ghcr.io/setheliot/xyz-demo-app:latest"
           name  = "${local.app_name}-xyz-demo-app-container"
