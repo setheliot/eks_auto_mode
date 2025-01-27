@@ -4,7 +4,7 @@ variable "env_name" {
   type        = string
 }
 
-# Define the instance type for EKS nodes
+# Define the instance type for EKS nodes - CURRENTLY NOT USED
 variable "instance_type" {
   description = "Instance type for EKS worker nodes"
   type        = string

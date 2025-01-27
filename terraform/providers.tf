@@ -25,14 +25,4 @@ locals {
   ebs_claim_name = "ebs-volume-pv-claim"
 }
 
-# Remote backend for storing Terraform state
-terraform {
-  backend "s3" {
-    bucket         = "seliot-terraform-state-bucket-arpio1"
-    key            = "eks-auto-mode-infra/terraform.tfstate"
-    dynamodb_table = "terraform-lock"
-    region         = "us-east-1"
-    encrypt        = false
-  }
-}
 

@@ -1,3 +1,13 @@
+###############
+#
+# Resources needed to give the application the necessary permissions
+# Includes IAM Role and Kubernetes ServiceAccount
+#
+# Logical order: 03
+##### "Logical order" refers to the order a human would think of these executions
+##### (although Terraform will determine actual order executed)
+#
+
 # AWS EKS Auto Mode does not seem to help with any of this
 # (unless I am missing something)
 

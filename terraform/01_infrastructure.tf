@@ -66,7 +66,7 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-  # AWS EKS Auto Mode is enabled here
+  # *** AWS EKS Auto Mode is enabled here ***
   # Auto compute, storage, and load balancing are enabled here
   # This replaces the more complex eks_managed_node_groups block
   cluster_compute_config = {

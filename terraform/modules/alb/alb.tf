@@ -1,8 +1,8 @@
-# EKS Auto mode has its own load balancer driver
-# So there is not need to AWS Load Balancer Controller
+# *** EKS Auto mode has its own load balancer driver ***
+# So there is no need to configure AWS Load Balancer Controller
 
-# EKS Auto Mode takes care of IAM permissions
-# There is not need to attach AWSLoadBalancerControllerIAMPolicy to the EKS Node IAM Role
+# *** EKS Auto Mode takes care of IAM permissions ***
+# There is no need to attach AWSLoadBalancerControllerIAMPolicy to the EKS Node IAM Role
 
 # Kubernetes Ingress Resource for ALB via AWS Load Balancer Controller
 resource "kubernetes_ingress_v1" "ingress_alb" {

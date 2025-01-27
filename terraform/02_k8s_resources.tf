@@ -2,7 +2,7 @@
 #
 # Resources in the Kubernetes Cluster such as StorageClass
 #
-# Logical order: 01 
+# Logical order: 02 
 ##### "Logical order" refers to the order a human would think of these executions
 ##### (although Terraform will determine actual order executed)
 #
@@ -25,11 +25,11 @@ provider "kubernetes" {
 }
 
 
-# EKS Auto mode has its own EBS CSI driver
-# So there is not need to install one
+# *** EKS Auto mode has its own EBS CSI driver ***
+# There is no need to install one
 
-# EKS Auto Mode takes care of IAM permissions
-# There is not need to attach AmazonEBSCSIDriverPolicy to the EKS Node IAM Role
+# *** EKS Auto Mode takes care of IAM permissions ***
+# There is no need to attach AmazonEBSCSIDriverPolicy to the EKS Node IAM Role
 
 #
 # EBS Persistent volume
@@ -43,7 +43,9 @@ resource "kubernetes_storage_class" "ebs" {
     }
   }
 
-  storage_provisioner = "ebs.csi.eks.amazonaws.com" # This the setting for EKS Auto Mode
+  # *** This setting specifies the EKS Auto Mode provisioner ***
+  storage_provisioner = "ebs.csi.eks.amazonaws.com"
+
   reclaim_policy      = "Retain"
   volume_binding_mode = "WaitForFirstConsumer"
   parameters = {
