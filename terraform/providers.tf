@@ -5,6 +5,10 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 5.8"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.35"
+    }
   }
 }
 provider "aws" {
@@ -25,4 +29,19 @@ locals {
   ebs_claim_name = "ebs-volume-pv-claim"
 }
 
+#
+# Setup the Kubernetes provider
+# Can only be configured after the EKS cluster is created
 
+
+# Data provider for cluster auth
+data "aws_eks_cluster_auth" "cluster_auth" {
+  name = module.eks.cluster_name
+}
+
+# Kubernetes provider
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  token                  = data.aws_eks_cluster_auth.cluster_auth.token
+}

@@ -46,7 +46,9 @@ module "vpc" {
   tags = {
     Terraform   = "true"
     Environment = local.prefix_env
-    always_zero = length(null_resource.check_workspace) # hack to get module to depend on workspace check
+
+    # Ensure workspace check logic runs before resources created
+    always_zero = length(null_resource.check_workspace)
   }
 }
 
@@ -80,8 +82,20 @@ module "eks" {
   tags = {
     Environment = local.prefix_env
     Terraform   = "true"
-    always_zero = length(null_resource.check_workspace) # hack to get module to depend on workspace check
+
+    # Ensure workspace check logic runs before resources created
+    always_zero = length(null_resource.check_workspace) 
   }
+
+  # The following is not needed on `apply` but is required so that
+  # `destroy` can complete.
+  #
+  # Deletion of some component of the VPC prevents the cluster controller
+  # from deleting the pods after the `Deployment` and `ReplicaSet` are deleted.
+  # This in turn prevents the `PersistentVolumeClaim` for deleting, because it 
+  # is being used by the pods
+  depends_on = [ module.vpc ]
+
 }
 
 locals {
@@ -171,7 +185,7 @@ resource "aws_vpc_endpoint" "private_link_dynamodb" {
 }
 
 resource "aws_dynamodb_table" "guestbook" {
-  depends_on       = [null_resource.check_workspace]
+
   name             = "${local.prefix_env}-guestbook"
   billing_mode     = "PROVISIONED"
   read_capacity    = 2
@@ -195,4 +209,8 @@ resource "aws_dynamodb_table" "guestbook" {
     Environment = local.prefix_env
     Terraform   = "true"
   }
+
+  # Ensure workspace check logic runs before resources created
+  depends_on       = [null_resource.check_workspace]
+
 }

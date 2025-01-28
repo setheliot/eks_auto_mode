@@ -15,6 +15,7 @@ locals {
 
 # This defines the kubernetes deployment for the guestbook (XYZ) app
 resource "kubernetes_deployment_v1" "guestbook_app_deployment" {
+
   metadata {
     name = "${local.app_name}-deployment"
     labels = {
@@ -98,11 +99,19 @@ resource "kubernetes_deployment_v1" "guestbook_app_deployment" {
 }
 
 # Create ALB 
+
 module "alb" {
-  source     = "./modules/alb"
-  prefix_env = local.prefix_env
-  app_name   = local.app_name
-  count      = var.use_alb ? 1 : 0
+
+  # Module uses `aws eks update-kubeconfig` so want to ensure cluster is ready
+  depends_on   = [module.eks]
+
+  source       = "./modules/alb"
+  prefix_env   = local.prefix_env
+  app_name     = local.app_name
+  aws_region   = var.aws_region
+  cluster_name = module.eks.cluster_name
+
+  count = var.use_alb ? 1 : 0
 }
 
 output "alb_dns_name" {
