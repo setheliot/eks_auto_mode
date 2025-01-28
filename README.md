@@ -49,15 +49,7 @@ If you want to experiment and make changes to the Terraform, you should be able 
 Coming soonish
 
 ### Tear-down (clean up) all the resources created
-```bash
-terraform init
-
-terraform workspace select <env_name>
-
-terraform destroy -var-file=environment/<selected tfvars file>
-```
-
-If the `terraform destroy` operation fails with an error trying to delete `kubernetes_persistent_volume_claim_v1.ebs_pvc`, then see [these steps](docs/cleanup.md#tear-down-clean-up-all-the-resources-created). 
+See [these steps](docs/cleanup.md#tear-down-clean-up-all-the-resources-created). 
 
 ---
 I welcome feedback or bug reports (use GitHub issues) and Pull Requests.
