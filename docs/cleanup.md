@@ -1,24 +1,12 @@
-This page is not needed, but is retained here for history.
-
-The problem with `terraform destroy` hanging when attempting to delete the `PersistentVolumeClaim` was _solved_ by adding the following to the `module "eks"` block:
-
-```
-  depends_on = [ module.vpc ]
-```
-
-It appears that deletion of some component of the VPC prevents the cluster controller from deleting the pods after the `Deployment` and `ReplicaSet` are deleted.
-
-This in turn prevents the `PersistentVolumeClaim` for deleting, because it is being used by the pods.
-
-It is possible the critical VPC component impacts communication between the Kubernetes control plane and the AWS control plane, or something similar.
-
----
-
 # Tear-down (clean up) all the resources created
 
 To tear-down all resources and clean up your environment, run these commands
 
 ```bash
+terraform init
+
+terraform workspace select <env_name>
+
 terraform state rm kubernetes_persistent_volume_claim_v1.ebs_pvc
 
 terraform destroy  -var-file=environment/<selected tfvars file>
@@ -49,4 +37,40 @@ If you forget and run `terraform destroy` without first running `terraform state
 * It might actually just work.
 * But if it fails with an error trying to delete `kubernetes_persistent_volume_claim_v1.ebs_pvc`, then just run the two commands at the top of this page and it will work fine.
 
+---
+## What is going on here?
 
+It appears that deletion of some component of the VPC prevents the cluster controller from deleting the pods after the `Deployment` and `ReplicaSet` are deleted.
+
+This in turn prevents the `PersistentVolumeClaim` for deleting, because it is being used by the pods.
+
+It is possible the critical VPC component impacts communication between the Kubernetes control plane and the AWS control plane, or something similar.
+
+
+The problem with `terraform destroy` can be solved by adding the following to the `module "eks"` block:
+
+```
+  depends_on = [ module.vpc ]
+```
+
+### But.... this introduced new problems
+
+* It takes much longer to deploy resources with `apply`
+
+* Deploying resources with `apply` becomes unreliable. 
+
+  The change in dependency and timing introduces a new issue where Terraform attempts to create Kubernetes resources _before_ the proper RBAC configurations are applied (e.g., ClusterRoles, RoleBindings). These resources then fail with errors like
+
+    ```
+    Error: serviceaccounts is forbidden: User "arn:aws:sts::12345678912:assumed-role/MyAdmin" cannot create resource "serviceaccounts" in API group "" in the namespace "default"
+    ```
+
+  After the `apply` failure, running the same exact `apply` command then succeeds, because by that time the RBAC have propagated. 
+
+* Time to tear-down resources with `destroy` also seems longer
+
+### The goal of this repository is to show how to create these resources
+
+Since creation is more important than deletion, here, this repo will not use the `depends_on` _fix_.
+
+Also this repo aims to show best practices, and in general is is a best practice to let Terraform determine dependency relationships.

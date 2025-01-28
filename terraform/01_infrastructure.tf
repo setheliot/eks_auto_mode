@@ -87,15 +87,6 @@ module "eks" {
     always_zero = length(null_resource.check_workspace) 
   }
 
-  # The following is not needed on `apply` but is required so that
-  # `destroy` can complete.
-  #
-  # Deletion of some component of the VPC prevents the cluster controller
-  # from deleting the pods after the `Deployment` and `ReplicaSet` are deleted.
-  # This in turn prevents the `PersistentVolumeClaim` for deleting, because it 
-  # is being used by the pods
-  depends_on = [ module.vpc ]
-
 }
 
 locals {
