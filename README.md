@@ -1,6 +1,6 @@
 # AWS EKS Auto Mode Terraform demo
 
-This repo provides the terraform files to deploy a demo app running on an AWS EKS Cluster with **Auto Mode** _enabled_, using best practices. This was created as an _educational_ tool to earn about EKS Auto Mode and Terraform. It is _not_ recommended that this configuration be used in production, without further assessment to ensure it meets organization requirements.
+This repo provides the terraform files to deploy a demo app running on an AWS EKS Cluster with **Auto Mode** _enabled_, using best practices. This was created as an _educational_ tool to learn about EKS Auto Mode and Terraform. It is _not_ recommended that this configuration be used in production, without further assessment to ensure it meets organization requirements.
 
 To learn more about AWS EKS Auto Mode see the [AWS Documentation](https://docs.aws.amazon.com/eks/latest/userguide/automode.html).
 
