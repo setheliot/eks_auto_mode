@@ -10,18 +10,6 @@ We enforce the following specific order of destruction:
 1. Remove the `PersistentVolumeClaim` while the cluster is still active to ensure controllers properly detach and delete the EBS volume.
 1. Then delete everything else.
 
-To tear-down all resources and clean up your environment, run these commands
-
-```bash
-terraform init
-
-terraform workspace select <env_name>
-
-terraform state rm kubernetes_persistent_volume_claim_v1.ebs_pvc
-
-terraform destroy  -var-file=environment/<selected tfvars file>
-```
-
 ---
 ## What is going on here?
 
