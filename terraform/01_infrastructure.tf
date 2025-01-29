@@ -87,6 +87,11 @@ module "eks" {
     always_zero = length(null_resource.check_workspace) 
   }
 
+  # Transient failures in creating StorageClass, PersistentVolumeClaim, 
+  # ServiceAccount, Deployment, were observed due to RBAC propagation not 
+  # completed. Therefore raising this from its default 30s to 60s
+  dataplane_wait_duration = "60s"
+
 }
 
 locals {
