@@ -49,11 +49,4 @@ Also this repo aims to show best practices, and in general it is a best practice
 
 ### How else might we handle this?
 
-Another approach, which may be better for production deployments (and cleanup), is to separate Terraform into two distinct configurations:
-
-1. **Infrastructure Configuration:** Deploys AWS resources such as the VPC, EKS cluster, and DynamoDB table.  
-2. **Kubernetes Configuration:** Deploys Kubernetes resources, including application code as part of the Deployment.
-
-This separation ensures that Kubernetes resources can be cleaned up properly while the cluster and VPC remain intact.
-
-For this repo the focus is on education and simplicity to _create_ these resources; therefore, it retains the _single_ Terraform configuration approach.
+Using [separate distinct Terraform configurations](./separate_configs.md) would address this issue.

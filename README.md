@@ -2,7 +2,7 @@
 
 This repo provides the Terraform configuration to deploy a demo app running on an AWS EKS Cluster with **Auto Mode** _enabled_, using best practices. This was created as an _educational_ tool to learn about EKS **Auto Mode** and Terraform. It is _not_ recommended that this configuration be used in production without further assessment to ensure it meets organization requirements.
 
-To learn more about AWS EKS **Auto Mode** see the [AWS Documentation](https://docs.aws.amazon.com/eks/latest/userguide/automode.html). EKS **Auto Mode** automates:
+To learn more about AWS EKS **Auto Mode**, see the [AWS Documentation](https://docs.aws.amazon.com/eks/latest/userguide/automode.html). EKS **Auto Mode** automates:
 * **Compute**: It creates new nodes when pods can't fit onto existing ones, and identifies low utilization nodes for deletion.
 * **Networking**: It configures AWS Load Balancers for Kubernetes Service and Ingress resources, to expose cluster apps to the internet.
 * **Storage**: It creates EBS Volumes to back Kubernetes storage resources.
@@ -24,10 +24,10 @@ Plus several other supporting resources, as shown in the following diagram:
 
 ## How to use
 
-Run all command from an environment that has
+Run all commands from an environment that has
 * Terraform installed
-* aws cli installed
-* AWS credentials to the target account for
+* AWS CLI installed
+* AWS credentials configured for the target account
 
 ### Option 1. For those familiar with using Terraform
 1. Update the S3 bucket and DynamoDB table used for Terraform backend state here: [backend.tf](terraform/backend.tf). Instructions are in the comments in that file.
@@ -43,7 +43,7 @@ Run all command from an environment that has
      ```bash
      terraform workspace new <env_name>
      ```
-   * On subsequent uses use
+   * On subsequent uses, use
      ```bash
      terraform workspace select <env_name>
      ```
@@ -57,11 +57,11 @@ Run all command from an environment that has
    terraform apply -var-file=environment/<selected tfvars file> -auto-approve
    ```
 
-Under **Outputs** may be listed a value for `alb_dns_name`. If not, then 
+Under **Outputs** there may be a value for `alb_dns_name`. If not, then 
 * you can wait a few seconds and re-run the `terraform apply` command, or
 * you can look up the value in your EKS cluster by examining the `Ingress` Kubernetes resource
 
-Use this DNS name to access the app.  Use `http:\\` (do _not_ use https). It may take about a minute after initial deployment for the application to start working.
+Use this DNS name to access the app.  Use `http://` (do _not_ use https). It may take about a minute after initial deployment for the application to start working.
 
 If you want to experiment and make changes to the Terraform, you should be able to start at step 3.
 
@@ -83,7 +83,7 @@ terraform destroy \
 
 terraform destroy \
     -auto-approve \
-    -target=kubernetes_persistent_volume_claim_v1.ebs_pvc\
+    -target=kubernetes_persistent_volume_claim_v1.ebs_pvc \
     -var-file=environment/<selected tfvars file>
 
 terraform destroy \
