@@ -1,15 +1,18 @@
-# AWS EKS Auto Mode Terraform demo
+# AWS EKS **Auto Mode** Terraform demo
 
-This repo provides the Terraform files to deploy a demo app running on an AWS EKS Cluster with **Auto Mode** _enabled_, using best practices. This was created as an _educational_ tool to learn about EKS Auto Mode and Terraform. It is _not_ recommended that this configuration be used in production without further assessment to ensure it meets organization requirements.
+This repo provides the Terraform configuration to deploy a demo app running on an AWS EKS Cluster with **Auto Mode** _enabled_, using best practices. This was created as an _educational_ tool to learn about EKS **Auto Mode** and Terraform. It is _not_ recommended that this configuration be used in production without further assessment to ensure it meets organization requirements.
 
-To learn more about AWS EKS Auto Mode see the [AWS Documentation](https://docs.aws.amazon.com/eks/latest/userguide/automode.html).
+To learn more about AWS EKS **Auto Mode** see the [AWS Documentation](https://docs.aws.amazon.com/eks/latest/userguide/automode.html). EKS **Auto Mode** automates:
+* **Compute**: It creates new nodes when pods can't fit onto existing ones, and identifies low utilization nodes for deletion.
+* **Networking**: It configures AWS Load Balancers for Kubernetes Service and Ingress resources, to expose cluster apps to the internet.
+* **Storage**: It creates EBS Volumes to back Kubernetes storage resources.
 
-In these Terraform files, comments describe how AWS EKS Auto Mode simplifies and changes deployment. You can search for "_EKS Auto Mode_" to find these comments.
+In these Terraform files, comments describe how AWS EKS **Auto Mode** simplifies and changes deployment. You can search for "_**EKS Auto Mode**_" to find these comments.
 
 ## Deployed resources
 
 This Terraform configuration deploys the following resources:
-* AWS EKS Cluster with Auto Mode _enabled_, using Amazon EC2 nodes
+* AWS EKS Cluster with **Auto Mode** _enabled_, using Amazon EC2 nodes
 * Amazon DynamoDB table
 * Amazon Elastic Block Store (EBS) volume used as attached storage for the Kubernetes cluster (a `PersistentVolume`)
 * Demo "guestbook" application, deployed via containers
