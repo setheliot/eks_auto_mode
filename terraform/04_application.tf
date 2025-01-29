@@ -93,9 +93,9 @@ resource "kubernetes_deployment_v1" "guestbook_app_deployment" {
             claim_name = local.ebs_claim_name
           }
         } #volume
-      }   #spec
+      }   #spec (template)
     }     #template
-  }
+  }       #spec (resource)
 }
 
 # Create ALB 

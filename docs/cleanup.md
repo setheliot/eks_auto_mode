@@ -1,4 +1,14 @@
-# Tear-down (clean up) all the resources created
+# Tear-down (clean up) all the resources created - explained
+
+
+We enforce the following specific order of destruction:
+* `Deployment` → `PersistentVolumeClaim` → EKS Cluster
+
+`terraform destroy` requires this order for a clean removal, as the cluster controllers handle necessary cleanup operations.
+1. Remove the Deployment first to allow cluster controllers to properly delete the pods.
+   - Pods must be deleted before the `PersistentVolumeClaim`; otherwise, the deletion process will hang.
+1. Remove the `PersistentVolumeClaim` while the cluster is still active to ensure controllers properly detach and delete the EBS volume.
+1. Then delete everything else.
 
 To tear-down all resources and clean up your environment, run these commands
 
@@ -12,48 +22,22 @@ terraform state rm kubernetes_persistent_volume_claim_v1.ebs_pvc
 terraform destroy  -var-file=environment/<selected tfvars file>
 ```
 
-Normally, tear-down would be as simple as a `terraform destroy` command. However, in this case the `PersistentVolumeController` (PVC) cannot be deleted using that command.  Here is why.
-
-With `terraform apply`, the following occurs:
-* The Terraform configuration creates a `Deployment` kubernetes resource. 
-* The Kubernetes cluster will then proceed to create a `ReplicaSet` which in turn will deploy pods.
-* The Terraform configuration creates a `PersistentVolumeController` (PVC) kubernetes resource.
-* Based on the Terraform configuration of the `Deployment`, the pods reference the `PersistentVolumeController` to create an EBS-backed Persistent Volume.
-
-Then with `terraform destroy` we encounter the following:
-* Terraform deletes `Deployment`. The deletion completes quickly. The `ReplicaSet` is also deleted.
-* However, it is observed sometimes that the pods are _not_ deleted. I do not know why, and this is worth further investigation.
-* Terraform attempts to delete the `PersistentVolumeController`, but must wait because it is referenced by the pods, which are still running. It eventually times out and fails
-
-The solution using `terraform state rm` works as follows
-* Terraform does not attempt to delete the `PersistentVolumeController`
-* The `PersistentVolumeController` will get destroyed anyway when the cluster is destroyed
-
-Side-effects
-* The EBS-backed Persistent Volume is orphaned
-* You can delete it manually
-
-If you forget and run `terraform destroy` without first running `terraform state rm`, then no problem:
-* It might actually just work.
-* But if it fails with an error trying to delete `kubernetes_persistent_volume_claim_v1.ebs_pvc`, then just run the two commands at the top of this page and it will work fine.
-
 ---
 ## What is going on here?
 
-It appears that deletion of some component of the VPC prevents the cluster controller from deleting the pods after the `Deployment` and `ReplicaSet` are deleted.
+When a single `terraform destroy` command is used to destroy everything, it appears that deletion of some _other_ resource that occurs before the destruction of `Deployment` (possibly a component of the VPC) prevents the cluster controller from deleting the pods after the `Deployment` and `ReplicaSet` are deleted.
 
-This in turn prevents the `PersistentVolumeClaim` for deleting, because it is being used by the pods.
+This in turn prevents the `PersistentVolumeClaim` from deleting, because it is being used by the pods.
 
-It is possible the critical VPC component impacts communication between the Kubernetes control plane and the AWS control plane, or something similar.
+It is possible that a critical VPC component impacts communication between the Kubernetes control plane and the AWS control plane, or something similar.
 
-
-The problem with `terraform destroy` can be solved by adding the following to the `module "eks"` block:
+This problem with `terraform destroy` can be solved by adding the following to the `module "eks"` block:
 
 ```
   depends_on = [ module.vpc ]
 ```
 
-### But.... this introduced new problems
+### But... this introduced new problems
 
 * It takes much longer to deploy resources with `apply`
 
@@ -71,6 +55,17 @@ The problem with `terraform destroy` can be solved by adding the following to th
 
 ### The goal of this repository is to show how to create these resources
 
-Since creation is more important than deletion, here, this repo will not use the `depends_on` _fix_.
+For this repo, the focus is on education and simplicity in creating these resources; therefore, it will not use the `depends_on` fix.
 
-Also this repo aims to show best practices, and in general is is a best practice to let Terraform determine dependency relationships.
+Also this repo aims to show best practices, and in general it is a best practice to let Terraform determine dependency relationships.
+
+### How else might we handle this?
+
+Another approach, which may be better for production deployments (and cleanup), is to separate Terraform into two distinct configurations:
+
+1. **Infrastructure Configuration:** Deploys AWS resources such as the VPC, EKS cluster, and DynamoDB table.  
+2. **Kubernetes Configuration:** Deploys Kubernetes resources, including application code as part of the Deployment.
+
+This separation ensures that Kubernetes resources can be cleaned up properly while the cluster and VPC remain intact.
+
+For this repo the focus is on education and simplicity to _create_ these resources; therefore, it retains the _single_ Terraform configuration approach.
