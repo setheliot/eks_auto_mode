@@ -1,6 +1,6 @@
 # AWS EKS Auto Mode Terraform demo
 
-This repo provides the terraform files to deploy a demo app running on an AWS EKS Cluster with **Auto Mode** _enabled_, using best practices. This was created as an _educational_ tool to learn about EKS Auto Mode and Terraform. It is _not_ recommended that this configuration be used in production, without further assessment to ensure it meets organization requirements.
+This repo provides the Terraform files to deploy a demo app running on an AWS EKS Cluster with **Auto Mode** _enabled_, using best practices. This was created as an _educational_ tool to learn about EKS Auto Mode and Terraform. It is _not_ recommended that this configuration be used in production without further assessment to ensure it meets organization requirements.
 
 To learn more about AWS EKS Auto Mode see the [AWS Documentation](https://docs.aws.amazon.com/eks/latest/userguide/automode.html).
 
@@ -30,12 +30,29 @@ Run all command from an environment that has
 1. Update the S3 bucket and DynamoDB table used for Terraform backend state here: [backend.tf](terraform/backend.tf). Instructions are in the comments in that file.
 1. Choose one of the `tfvars` configuration files in the [terraform/environment](terraform/environment) directory, or create a new one. The environment name `env_name` should be unique to each `tfvars` configuration file. You can also set the AWS Region in the configuration file.
 1. `cd` into the `terraform` directory
-1. Run `terraform init`
+1. Initialize Terraform
+    ```bash
+    terraform init
+    ```
+
 1. Set the terraform workspace to the same value as the environment name `env_name` for the `tfvars` configuration file you are using.
-   * If this is your first time running then use `terraform workspace new <env_name>`
-   * On subsequent uses use `terraform workspace select <env_name>`
-1. Run `terraform plan -var-file=environment/<selected tfvars file>`, and review the plan
-1. Run `terraform apply -var-file=environment/<selected tfvars file>`
+   * If this is your first time running then use 
+     ```bash
+     terraform workspace new <env_name>
+     ```
+   * On subsequent uses use
+     ```bash
+     terraform workspace select <env_name>
+     ```
+1. Generate the plan and review it
+   ```bash
+   terraform plan -var-file=environment/<selected tfvars file>
+   ```
+
+1. Deploy the resources
+   ```bash
+   terraform apply -var-file=environment/<selected tfvars file> -auto-approve
+   ```
 
 Under **Outputs** may be listed a value for `alb_dns_name`. If not, then 
 * you can wait a few seconds and re-run the `terraform apply` command, or
@@ -49,7 +66,29 @@ If you want to experiment and make changes to the Terraform, you should be able 
 Coming soonish
 
 ### Tear-down (clean up) all the resources created
-See [these steps](docs/cleanup.md#tear-down-clean-up-all-the-resources-created). 
+
+```bash
+terraform init
+terraform workspace select <env_name>
+```
+
+```bash
+terraform destroy \
+    -auto-approve \
+    -target=kubernetes_deployment_v1.guestbook_app_deployment \
+    -var-file=environment/<selected tfvars file>
+
+terraform destroy \
+    -auto-approve \
+    -target=kubernetes_persistent_volume_claim_v1.ebs_pvc\
+    -var-file=environment/<selected tfvars file>
+
+terraform destroy \
+    -auto-approve \
+    -var-file=environment/<selected tfvars file>
+```
+
+To understand why this requires three separate `destroy` operations, [see this](docs/cleanup.md#tear-down-clean-up-all-the-resources-created). 
 
 ---
 I welcome feedback or bug reports (use GitHub issues) and Pull Requests.
