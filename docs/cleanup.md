@@ -1,11 +1,11 @@
-# Tear-down (clean up) all the resources created - explained
+# Tear-down (clean up) all the resources - explained
 
 
 We enforce the following specific order of destruction:
 * `Deployment` → `PersistentVolumeClaim` → EKS Cluster
 
-`terraform destroy` requires this order for a clean removal, as the cluster controllers handle necessary cleanup operations.
-1. Remove the Deployment first to allow cluster controllers to properly delete the pods.
+This is the order required for a clean removal when using `terraform destroy`. This allows the cluster controllers to handle necessary cleanup operations.
+1. Remove the `Deployment` first to allow cluster controllers to properly delete the pods.
    - Pods must be deleted before the `PersistentVolumeClaim`; otherwise, the deletion process will hang.
 1. Remove the `PersistentVolumeClaim` while the cluster is still active to ensure controllers properly detach and delete the EBS volume.
 1. Then delete everything else.
@@ -13,7 +13,7 @@ We enforce the following specific order of destruction:
 ---
 ## What is going on here?
 
-When a single `terraform destroy` command is used to destroy everything, it appears that deletion of some _other_ resource that occurs before the destruction of `Deployment` (possibly a component of the VPC) prevents the cluster controller from deleting the pods after the `Deployment` and `ReplicaSet` are deleted.
+When a single `terraform destroy` command is used to destroy everything, destruction of the `Deployment` and `ReplicaSet` does _not_ delete the pods. Some _other_ resource needed by the cluster controllers (possibly a component of the VPC), is getting destroyed before the `Deployment` is.
 
 This in turn prevents the `PersistentVolumeClaim` from deleting, because it is being used by the pods.
 
@@ -25,13 +25,15 @@ This problem with `terraform destroy` can be solved by adding the following to t
   depends_on = [ module.vpc ]
 ```
 
+The forces destruction of the VPC to wait until after destruction of the EKS cluster.
+
 ### But... this introduced new problems
 
 * It takes much longer to deploy resources with `apply`
 
 * Deploying resources with `apply` becomes unreliable. 
 
-  The change in dependency and timing introduces a new issue where Terraform attempts to create Kubernetes resources _before_ the proper RBAC configurations are applied (e.g., ClusterRoles, RoleBindings). These resources then fail with errors like
+  The change in dependency and timing introduces a new issue where Terraform attempts to create Kubernetes resources _before_ the proper RBAC configurations are applied (e.g., `ClusterRoles`, `RoleBindings`). These resources then fail with errors like
 
     ```
     Error: serviceaccounts is forbidden: User "arn:aws:sts::12345678912:assumed-role/MyAdmin" cannot create resource "serviceaccounts" in API group "" in the namespace "default"
@@ -49,4 +51,4 @@ Also this repo aims to show best practices, and in general it is a best practice
 
 ### How else might we handle this?
 
-Using [separate distinct Terraform configurations](./separate_configs.md) would address this issue.
+Using [separate distinct Terraform configurations](./separate_configs.md) is the best way to address this issue.

@@ -1,6 +1,6 @@
-### `terraform apply` fails with authentication errors creating some Kubernetes resources
+### 1. `terraform apply` fails with authentication errors when creating some Kubernetes resources
 
-The following Kubernetes resources fail:
+The following Kubernetes resources are affected:
 `StorageClass`, `PersistentVolumeClaim`, `ServiceAccount`, `Deployment`
 
 The errors reported for each of these look like this:
@@ -14,7 +14,7 @@ The errors reported for each of these look like this:
 ```
 #### Cause
 
-Although the EKS Cluster deployment was completed, Terraform attempted to create these resources before all cluster functionality was available. In this case, it could have been due to RBAC Role Bindings not yet being completed.
+Although the EKS Cluster deployment is completed, Terraform attempted to create these resources before all cluster functionality is available. In this case, it could have been due to RBAC Role Bindings not yet being completed.
 
 #### How to fix
 
@@ -23,3 +23,9 @@ Re-run the `terraform apply` command. The cluster has had time to become fully f
 ##### That feels like a workaround. What is the real fix?
 
 * See this note on using [separate distinct Terraform configurations](./separate_configs.md)
+
+#### Other notes
+When creating the EKS cluster, the `dataplane_wait_duration` variable has been increased from its default 30s to 60s, to address this issue.
+
+If you are using timeouts to fix an issue though, then you have not _fixed_ it, you have only decreased how often it will happen. 🤷‍♂️
+

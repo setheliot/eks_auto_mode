@@ -4,7 +4,9 @@ variable "env_name" {
   type        = string
 }
 
-# Define the instance type for EKS nodes - CURRENTLY NOT USED
+
+# Define the instance type for EKS nodes
+### Not yet implemented -- Auto Mode manages what instances you get
 variable "instance_type" {
   description = "Instance type for EKS worker nodes"
   type        = string
@@ -26,6 +28,7 @@ variable "eks_cluster_version" {
 }
 
 # Use ALB - can set this to false for to get NLB
+### NLB not yet implemented. If false you get no load balancer
 variable "use_alb" {
   description = "When true, uses AWS Auto to create ALB. When false an NLB is created"
   type        = bool

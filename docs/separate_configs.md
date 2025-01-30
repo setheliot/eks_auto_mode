@@ -1,8 +1,8 @@
 # Single Terraform configuration or multiple ones?
 
-The approach taken here is a single Terraform config that creates everything. This includes AWS resources, the EKS Cluster, Kubernetes resources and the application deployment (which is a Kubernetes resource that sets up pods running a specified container).
+The approach taken here is a single Terraform config that creates everything. This includes AWS resources, the EKS Cluster, Kubernetes resources and the application deployment (which is a Kubernetes resource that sets up pods running a container).
 
-Being in a single Terraform config simplified creation, and requires only a single `terraform apply` command. This is the right approach for this demo repo and its goal to introduce the concepts of AWS EKS **Auto Mode**.
+Being in a single Terraform config simplifies creation, and requires only a single `terraform apply` command. This is the right approach for this demo repo and its goals to introduce the concepts of AWS EKS **Auto Mode**, and enable users to set up a working cluster and application quickly.
 
 Another approach, which may be better for production deployments (and cleanup), is to separate Terraform into two distinct configurations:
 

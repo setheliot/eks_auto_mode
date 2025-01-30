@@ -93,6 +93,8 @@ terraform destroy \
 
 To understand why this requires three separate `destroy` operations, [see this](docs/cleanup.md#tear-down-clean-up-all-the-resources-created). 
 
+### Known issues
+* [Known issues](docs/known_issues.md)
 ---
 I welcome feedback or bug reports (use GitHub issues) and Pull Requests.
 
