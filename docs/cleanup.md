@@ -25,7 +25,7 @@ This problem with `terraform destroy` can be solved by adding the following to t
   depends_on = [ module.vpc ]
 ```
 
-The forces destruction of the VPC to wait until after destruction of the EKS cluster.
+This forces destruction of the VPC to wait until after destruction of the EKS cluster.
 
 ### But... this introduced new problems
 

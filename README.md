@@ -9,6 +9,13 @@ To learn more about AWS EKS **Auto Mode**, see the [AWS Documentation](https://d
 
 In these Terraform files, comments describe how AWS EKS **Auto Mode** simplifies and changes deployment. You can search for "_**EKS Auto Mode**_" to find these comments.
 
+## Blog post
+There is a blog post that complements this repo:
+
+**[Amazon EKS Auto Mode ENABLED - Build your super-powered cluster](https://community.aws/content/2sV2SNSoVeq23OvlyHN2eS6lJfa/amazon-eks-auto-mode-enabled-build-your-super-powered-cluster)**
+
+This blog posts goes into detail on the changes introduced by EKS Auto Mode, and what Auto Mode can (and cannot) do
+
 ## Deployed resources
 
 This Terraform configuration deploys the following resources:
