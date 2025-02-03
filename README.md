@@ -84,6 +84,17 @@ cd scripts
 
 ### Tear-down (clean up) all the resources created
 
+#### Scripted
+
+```bash
+cd scripts
+
+./cleanup_cluster.sh \
+    -var-file=environment/<selected tfvars file>
+```
+
+#### Do it yourself
+
 ```bash
 terraform init
 terraform workspace select <env_name>
