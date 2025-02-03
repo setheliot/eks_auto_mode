@@ -15,7 +15,6 @@ locals {
 
 # This defines the kubernetes deployment for the guestbook (XYZ) app
 resource "kubernetes_deployment_v1" "guestbook_app_deployment" {
-
   metadata {
     name = "${local.app_name}-deployment"
     labels = {
@@ -39,6 +38,8 @@ resource "kubernetes_deployment_v1" "guestbook_app_deployment" {
       spec {
         service_account_name = local.ddb_serviceaccount
         container {
+          # Application is from here https://github.com/setheliot/xyz_app_poc/tree/main/src 
+          # Improvements and pull requests welcomed!
           image = "ghcr.io/setheliot/xyz-demo-app:latest"
           name  = "${local.app_name}-xyz-demo-app-container"
 
@@ -96,6 +97,10 @@ resource "kubernetes_deployment_v1" "guestbook_app_deployment" {
       }   #spec (template)
     }     #template
   }       #spec (resource)
+  
+  # Give time for the cluster to complete (controllers, RBAC and IAM propagation)
+  # See https://github.com/setheliot/eks_auto_mode/blob/main/docs/separate_configs.md
+  depends_on = [module.eks]   
 }
 
 # Create ALB 

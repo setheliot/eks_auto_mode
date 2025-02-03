@@ -29,3 +29,29 @@ When creating the EKS cluster, the `dataplane_wait_duration` variable has been i
 
 If you are using timeouts to fix an issue though, then you have not _fixed_ it, you have only decreased how often it will happen. 🤷‍♂️
 
+Note: This issue should be solved by [this](./separate_configs.md#single-terraform-config-challenges).
+
+### 2. `terraform init` fails with checksum violation
+
+```
+$ terraform init                                                                      [18:29:20]
+Initializing the backend...
+╷
+│ Error: Error refreshing state: state data in S3 does not have the expected content.
+│
+│ The checksum calculated for the state stored in S3 does not match the checksum
+│ stored in DynamoDB.
+| ...
+```
+
+#### Cause
+
+Your workspace has reset to "default," which has no state, and therefore fails checksum
+
+### Hot to fix
+
+```
+terraform workspace select <env_name>
+
+terraform init
+```

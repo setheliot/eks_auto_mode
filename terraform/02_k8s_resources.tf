@@ -33,6 +33,10 @@ resource "kubernetes_storage_class" "ebs" {
     type      = "gp3"
     encrypted = "true"
   }
+
+  # Give time for the cluster to complete (controllers, RBAC and IAM propagation)
+  # See https://github.com/setheliot/eks_auto_mode/blob/main/docs/separate_configs.md
+  depends_on = [module.eks] 
 }
 
 
@@ -40,7 +44,6 @@ resource "kubernetes_storage_class" "ebs" {
 # EBS Persistent Volume Claim
 
 resource "kubernetes_persistent_volume_claim_v1" "ebs_pvc" {
-
   metadata {
     name = local.ebs_claim_name
   }
@@ -59,6 +62,9 @@ resource "kubernetes_persistent_volume_claim_v1" "ebs_pvc" {
   }
   wait_until_bound = false
 
+  # Give time for the cluster to complete (controllers, RBAC and IAM propagation)
+  # See https://github.com/setheliot/eks_auto_mode/blob/main/docs/separate_configs.md
+  depends_on = [module.eks] 
 }
 
 # This will create the PVC, which will wait until a pod needs it, and then create a PersistentVolume

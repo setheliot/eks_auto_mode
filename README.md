@@ -73,7 +73,14 @@ Use this DNS name to access the app.  Use `http://` (do _not_ use https). It may
 If you want to experiment and make changes to the Terraform, you should be able to start at step 3.
 
 ### Option 2. Automatic configuration and execution
-Coming soonish
+Beta version 0.1
+
+```bash
+cd scripts
+
+./ex_cluster_deploy.sh
+```
+
 
 ### Tear-down (clean up) all the resources created
 
