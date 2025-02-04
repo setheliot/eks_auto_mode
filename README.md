@@ -80,7 +80,7 @@ If you want to experiment and make changes to the Terraform, you should be able 
 ```bash
 cd scripts
 
-./ex_cluster_deploy.sh
+./ez_cluster_deploy.sh
 ```
 
 
