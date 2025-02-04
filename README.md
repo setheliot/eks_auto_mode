@@ -73,8 +73,10 @@ Use this DNS name to access the app.  Use `http://` (do _not_ use https). It may
 If you want to experiment and make changes to the Terraform, you should be able to start at step 3.
 
 ### Option 2. Automatic configuration and execution
-Beta version 0.1
 
+1. Update the S3 bucket and DynamoDB table used for Terraform backend state here: [backend.tf](terraform/backend.tf). Instructions are in the comments in that file.
+1. Choose one of the `tfvars` configuration files in the [terraform/environment](terraform/environment) directory, or create a new one. The environment name `env_name` should be unique to each `tfvars` configuration file. You can also set the AWS Region in the configuration file.
+1. Run the following commands:
 ```bash
 cd scripts
 
