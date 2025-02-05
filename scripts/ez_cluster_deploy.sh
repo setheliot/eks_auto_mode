@@ -50,15 +50,20 @@ fi
 # Verify user is targeting the correct AWS account
 ###
 
+
+echo -e "\n=============================================================="
+echo "😎 Let's create an Amazon EKS Cluster with Auto Mode ENABLED"
+echo -e "==============================================================\n"
+
 # Check if AWS CLI is installed
 if ! command -v aws &> /dev/null; then
-    echo "AWS CLI is not installed. Please install AWS CLI and try again."
+    echo "🫵 AWS CLI is not installed. Please install AWS CLI and try again."
     exit 1
 fi
 
 # Check if Terraform is installed
 if ! command -v terraform &> /dev/null; then
-    echo "Terraform is not installed. Please install Terraform and try again."
+    echo "🫵 Terraform is not installed. Please install Terraform and try again."
     exit 1
 fi
 
@@ -74,9 +79,12 @@ fi
 
 # Prompt the user for confirmation
 echo -e "\nYour EKS cluster will deploy to AWS account ===> ${AWS_ACCOUNT} <===. Is that what you want?\n"
-echo "**** You MUST ensure this is NOT a production account and is NOT currently in use for any business purpose ****"
-echo "**** This script and Terraform configuration will perform write and create operations on this account.     ****"
-echo "**** If you are unsure, then do NOT proceed                                                                ****"
+echo "**** 👀 You MUST ensure this is NOT a production account and is NOT 👀 ****"
+echo "**** 👀          currently in use for any business purpose          👀 ****"
+echo "****                                                                   ****"
+echo "**** This script and Terraform  will create resources in this account  ****"
+echo "****                                                                   ****"
+echo "****            If you are unsure, then do NOT proceed                 ****"
 read -r -p "Proceed? [y/n]: " response
 
 # Check if response is "y" or "yes"
@@ -143,7 +151,7 @@ if [[ "$BACKEND_ISOK" == "false" ]]; then
 fi
 
 
-echo "✅ All checks of Terraform of backend state passed!"
+echo "✅ All checks of Terraform backend state passed!"
 
 ###
 # Deploy the cluster
@@ -192,7 +200,7 @@ elif [[ -z "$REGION" ]]; then
     exit 1
 fi
 
-echo "✅ Selected environment: $ENV_NAME to deploy to AWS Region $REGION (from $(basename "$TFVARS_FILE"))"
+echo "✅ Selected environment [$ENV_NAME] to deploy to AWS Region [$REGION] (from $(basename "$TFVARS_FILE"))"
 read -r -p "Is this correct? [y/n]: " response
 
 # Check if response is "y" or "yes"
@@ -223,7 +231,7 @@ if [[ "$CURRENT_WS" != "$ENV_NAME" ]]; then
     
     # Check if the workspace exists
     if ! terraform workspace select "$ENV_NAME" 2>/dev/null; then
-        echo "📋 Workspace '$ENV_NAME' does not exist. Creating it..."
+        echo "🔄 Workspace '$ENV_NAME' does not exist. Creating it..."
         terraform workspace new "$ENV_NAME"
     fi
 fi
@@ -232,4 +240,40 @@ fi
 echo "🚀 Running Terraform apply..."
 terraform apply -auto-approve -var-file="$TFVARS_FILE"
 
+#####
+# Get the ALB URL
 
+echo -e "\n=========================="
+# Wait for 10 seconds
+echo -n "🔄 Getting ALB URL. Please stand by..."
+for i in {1..10}; do
+    echo -n "."
+    sleep 1
+done
+echo ""
+
+
+# Run terraform apply and capture the output
+OUTPUT=$(terraform apply -var-file="$TFVARS_FILE" -target="module.alb" -auto-approve)
+
+# Extract the value of alb_dns_name
+# ALB_DNS_NAME=$(echo "$OUTPUT" | grep -oP '(?<=alb_dns_name = \").*?(?=\")')
+ALB_DNS_NAME=$(echo "$OUTPUT" | awk -F ' = "' '/alb_dns_name/ {gsub(/"/, "", $2); print $2}')
+
+# This may include multiple lines, so extract the URL
+URL=$(echo "$ALB_DNS_NAME" | grep -oE '[a-zA-Z0-9.-]+\.elb\.amazonaws\.com' | head -n1)
+
+# If nothing found then this is an error
+if [ -z "$ALB_DNS_NAME" ]; then
+    echo "❌ Error: Cannot find Application Load Balancer URL."
+    exit 1
+# If not URL and ALB still processing, then all is well, but do not have URL yet
+elif [[ -z "$URL" && "$ALB_DNS_NAME" == *"ALB is still provisioning"* ]]; then
+    echo "⏳ The URL for your application is not ready yet..."
+    exit 1
+# Output the URL
+else
+    echo "⭐️ Here is the URL of you newly deployed application running on EKS:"
+    echo "💻    http://$URL    "
+    echo "⏳ Please be patient. It may take up to a minute to become available"
+fi

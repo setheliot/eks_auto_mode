@@ -68,15 +68,15 @@ if [[ "$CURRENT_WS" != "$ENV_NAME" ]]; then
     
     # Check if the workspace exists
     if ! terraform workspace select "$ENV_NAME" 2>/dev/null; then
-        echo "⚠️ Workspace '$ENV_NAME' does not exist."
+        echo "❌ Workspace '$ENV_NAME' does not exist."
     fi
 fi
 
-echo "✅ Using Terraform workspace $ENV_NAME"
+echo "✅ Using Terraform workspace [$ENV_NAME]"
 
 
 # Run Terraform destroy commands
-echo "🏃 Running terraform destroy on kubernetes_deployment_v1..."
+echo "🏃 1 of 3 - Running terraform destroy on kubernetes_deployment_v1..."
 
 terraform destroy \
     -auto-approve \
@@ -85,7 +85,7 @@ terraform destroy \
 
 echo "✅ kubernetes_deployment_v1 deleted"
 
-echo "🏃 Running terraform destroy on kubernetes_persistent_volume_claim_v1..."
+echo "🏃 2 of 3 - Running terraform destroy on kubernetes_persistent_volume_claim_v1..."
 
 terraform destroy \
     -auto-approve \
@@ -94,7 +94,7 @@ terraform destroy \
 
 echo "✅ kubernetes_persistent_volume_claim_v1 deleted"
 
-echo "🏃 Running terraform destroy on all remaining resources..."
+echo "🏃 3 of 3 - Running terraform destroy on all remaining resources..."
 
 terraform destroy \
     -auto-approve \

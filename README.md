@@ -29,12 +29,14 @@ Plus several other supporting resources, as shown in the following diagram:
 
 ![architecture](images/architecture.jpg)
 
-## How to use
+## Deploy EKS cluster and app resources
 
 Run all commands from an environment that has
 * Terraform installed
 * AWS CLI installed
 * AWS credentials configured for the target account
+
+You have two options:
 
 ### Option 1. For those familiar with using Terraform
 1. Update the S3 bucket and DynamoDB table used for Terraform backend state here: [backend.tf](terraform/backend.tf). Instructions are in the comments in that file.
@@ -84,9 +86,9 @@ cd scripts
 ```
 
 
-### Tear-down (clean up) all the resources created
+## Tear-down (clean up) all the resources created
 
-#### Scripted
+### Scripted
 
 ```bash
 cd scripts
@@ -95,7 +97,7 @@ cd scripts
     -var-file=environment/<selected tfvars file>
 ```
 
-#### Do it yourself
+### Do it yourself
 
 ```bash
 terraform init
@@ -120,7 +122,7 @@ terraform destroy \
 
 To understand why this requires three separate `destroy` operations, [see this](docs/cleanup.md#tear-down-clean-up-all-the-resources-created). 
 
-### Known issues
+## Known issues
 * [Known issues](docs/known_issues.md)
 ---
 I welcome feedback or bug reports (use GitHub issues) and Pull Requests.

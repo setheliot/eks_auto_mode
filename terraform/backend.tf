@@ -8,8 +8,8 @@
 # Update `bucket` below to the name of the S3 bucket you will use. This usually will be a new bucket
 # but can also be one which you already use for Terraform state
 
-# Create a DynamoDB with the name indicated by `dynamodb_table` below
-# For this DynamoDB table, use LockID (type String) as the partition key
+# Create a DynamoDB table with the same name as the value of `dynamodb_table` below
+# For this DynamoDB table, set LockID (type String) as the partition key (there is no Sort key)
 
 terraform {
   backend "s3" {
