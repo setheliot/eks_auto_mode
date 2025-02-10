@@ -38,6 +38,8 @@ module "vpc" {
   single_nat_gateway   = true
   enable_dns_hostnames = true
 
+  # Tag subnets for use by **Auto Mode** Load Balancer controller
+  # https://docs.aws.amazon.com/eks/latest/userguide/tag-subnets-auto.html
   public_subnet_tags = {
     "Name"                   = "${local.prefix_env}-public-subnet"
     "kubernetes.io/role/elb" = "1"
