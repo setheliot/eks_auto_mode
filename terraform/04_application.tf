@@ -94,13 +94,21 @@ resource "kubernetes_deployment_v1" "guestbook_app_deployment" {
             claim_name = local.ebs_claim_name
           }
         } #volume
+
+        # This is necessary when using EKS Auto Mode to share the EBS PV among pods
+        # see https://docs.aws.amazon.com/eks/latest/userguide/auto-troubleshoot.html#auto-troubleshoot-share-pod-volumes
+        security_context {
+          se_linux_options {
+            level = "s0:c123,c124,c125"
+          }
+        } #security_context
       }   #spec (template)
     }     #template
   }       #spec (resource)
-  
+
   # Give time for the cluster to complete (controllers, RBAC and IAM propagation)
   # See https://github.com/setheliot/eks_auto_mode/blob/main/docs/separate_configs.md
-  depends_on = [module.eks]   
+  depends_on = [module.eks]
 }
 
 # Create ALB 
@@ -108,7 +116,7 @@ resource "kubernetes_deployment_v1" "guestbook_app_deployment" {
 module "alb" {
 
   # Module uses `aws eks update-kubeconfig` so want to ensure cluster is ready
-  depends_on   = [module.eks]
+  depends_on = [module.eks]
 
   source       = "./modules/alb"
   prefix_env   = local.prefix_env
