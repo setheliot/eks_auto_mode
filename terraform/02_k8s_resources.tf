@@ -29,7 +29,7 @@ resource "kubernetes_storage_class" "ebs" {
 
   # The reclaim policy for a PersistentVolume tells the cluster 
   # what to do with the volume after it has been released of its claim
-  reclaim_policy      = "Delete"
+  reclaim_policy = "Delete"
 
   # Delay the binding and provisioning of a PersistentVolume until a Pod 
   # using the PersistentVolumeClaim is created 
@@ -44,7 +44,7 @@ resource "kubernetes_storage_class" "ebs" {
 
   # Give time for the cluster to complete (controllers, RBAC and IAM propagation)
   # See https://github.com/setheliot/eks_auto_mode/blob/main/docs/separate_configs.md
-  depends_on = [module.eks] 
+  depends_on = [module.eks]
 }
 
 
@@ -72,7 +72,7 @@ resource "kubernetes_persistent_volume_claim_v1" "ebs_pvc" {
     }
 
     storage_class_name = "ebs-storage-class"
-  
+
   }
 
   # Setting this allows `Terraform apply` to continue
@@ -81,7 +81,7 @@ resource "kubernetes_persistent_volume_claim_v1" "ebs_pvc" {
 
   # Give time for the cluster to complete (controllers, RBAC and IAM propagation)
   # See https://github.com/setheliot/eks_auto_mode/blob/main/docs/separate_configs.md
-  depends_on = [module.eks] 
+  depends_on = [module.eks]
 }
 
 # This will create the PVC, which will wait until a pod needs it, and then create a PersistentVolume

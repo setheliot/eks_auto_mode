@@ -65,7 +65,7 @@ resource "kubernetes_service_v1" "service_alb" {
 }
 
 resource "kubernetes_ingress_class_v1" "ingressclass_alb" {
-  depends_on   = [null_resource.apply_ingressclassparams_manifest]
+  depends_on = [null_resource.apply_ingressclassparams_manifest]
   metadata {
     name = "${var.prefix_env}-ingressclass-alb"
 

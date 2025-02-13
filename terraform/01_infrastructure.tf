@@ -31,7 +31,7 @@ module "vpc" {
   name            = "${local.prefix_env}-vpc"
   cidr            = "10.0.0.0/16"
   azs             = slice(data.aws_availability_zones.available.names, 0, local.max_azs)
-  private_subnets = slice(["10.0.1.0/24",   "10.0.2.0/24",   "10.0.3.0/24"],   0, local.max_azs)
+  private_subnets = slice(["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"], 0, local.max_azs)
   public_subnets  = slice(["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"], 0, local.max_azs)
 
   enable_nat_gateway   = true
@@ -91,7 +91,7 @@ module "eks" {
     Terraform   = "true"
 
     # Ensure workspace check logic runs before resources created
-    always_zero = length(null_resource.check_workspace) 
+    always_zero = length(null_resource.check_workspace)
   }
 
   # Transient failures in creating StorageClass, PersistentVolumeClaim, 
@@ -214,6 +214,6 @@ resource "aws_dynamodb_table" "guestbook" {
   }
 
   # Ensure workspace check logic runs before resources created
-  depends_on       = [null_resource.check_workspace]
+  depends_on = [null_resource.check_workspace]
 
 }

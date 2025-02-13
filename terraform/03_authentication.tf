@@ -77,9 +77,9 @@ resource "kubernetes_service_account" "ddb_serviceaccount" {
       "eks.amazonaws.com/role-arn" = aws_iam_role.ddb_access_role.arn
     }
   }
-  
+
   # Give time for the cluster to complete (controllers, RBAC and IAM propagation)
   # See https://github.com/setheliot/eks_auto_mode/blob/main/docs/separate_configs.md
-  depends_on = [module.eks] 
+  depends_on = [module.eks]
 }
 
