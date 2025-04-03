@@ -215,6 +215,7 @@ if ! terraform init 2> terraform_init_err.log; then
         echo "👍 Ignoring known state data error and continuing..."
     else
         echo "❌ Unexpected error occurred. Exiting."
+        echo "👉 Check $TF_DIR/terraform_init_err.log for more details."        
         exit 1
     fi 
 fi
