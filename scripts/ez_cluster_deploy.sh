@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Functions ==================
 
@@ -85,7 +85,8 @@ echo "****                                                                   ***
 echo "**** This script and Terraform  will create resources in this account  ****"
 echo "****                                                                   ****"
 echo "****            If you are unsure, then do NOT proceed                 ****"
-read -r -p "Proceed? [y/n]: " response
+printf "Proceed? [y/n]: "
+read -r response
 
 # Check if response is "y" or "yes"
 if [[ ! "$response" =~ ^[Yy]([Ee][Ss])?$ ]]; then
@@ -177,7 +178,8 @@ for i in "${!TFVARS_FILES[@]}"; do
 done
 
 # Prompt the user to select an environment
-read -r -p "Select a number: " choice
+printf "Select a number: "
+read -r choice
 
 # Validate user input
 if ! [[ "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#TFVARS_FILES[@]} )); then
@@ -201,7 +203,8 @@ elif [[ -z "$REGION" ]]; then
 fi
 
 echo "✅ Selected environment [$ENV_NAME] to deploy to AWS Region [$REGION] (from $(basename "$TFVARS_FILE"))"
-read -r -p "Is this correct? [y/n]: " response
+printf "Is this correct? [y/n]: "
+read -r response
 
 # Check if response is "y" or "yes"
 if [[ ! "$response" =~ ^[Yy]([Ee][Ss])?$ ]]; then
