@@ -127,7 +127,6 @@ resource "aws_dynamodb_table" "guestbook" {
   read_capacity    = 2
   write_capacity   = 2
   hash_key         = "GuestID"
-  range_key        = "Name"
   stream_enabled   = true
   stream_view_type = "NEW_IMAGE"
 
@@ -137,11 +136,6 @@ resource "aws_dynamodb_table" "guestbook" {
 
   attribute {
     name = "GuestID"
-    type = "S"
-  }
-
-  attribute {
-    name = "Name"
     type = "S"
   }
 

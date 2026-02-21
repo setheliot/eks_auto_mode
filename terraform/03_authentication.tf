@@ -13,7 +13,7 @@
 
 
 #
-# Use IRSA to give pods the necesssary permissions
+# Use IRSA to give pods the necessary permissions
 #
 
 #
